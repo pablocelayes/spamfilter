@@ -9,10 +9,10 @@ import numpy as np
 
 
 CATEGORICAL = [
-    'author_email_domain',
-    'author_plan_at_submission',
-    'document_format',
-    'document_upload_method',
+    # 'author_email_domain',
+    # 'author_plan_at_submission',
+    # 'document_format',
+    # 'document_upload_method',
 ]
 
 
@@ -21,7 +21,7 @@ NUMERIC_FEATURES = [
     'internal',
     'foreign_language',
     'too_short',
-    'repeated_characters',
+    # 'repeated_characters',
     'repeated_lines',
     'html',
     'phone_number',
@@ -56,20 +56,23 @@ def vectorize_features(df):
     return X 
 
 
-def load_or_create_dataset():
-    fname = 'dataset.pickle'
+def load_or_create_dataset(scaled=True):
+    fname = 'dataset_.pickle'
+    if scaled:
+        fname = 'scaled_' + fname
     if os.path.exists(fname):
-        X_train, X_test, y_train, y_test = pickle.load(open(fname, 'rb'))
+        X, y = pickle.load(open(fname, 'rb'))
     else:    
         df = pd.read_csv('training_dataset.csv')
         X = vectorize_features(df)
+        if scaled:
+            X = preprocessing.scale(X)
         y = df.spam.values
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        pickle.dump((X, y), open(fname, 'wb'))
 
-        pickle.dump((X_train, X_test, y_train, y_test), open(fname, 'wb'))
-
-    return X_train, X_test, y_train, y_test
+    return X, y
 
 if __name__ == '__main__':
-    load_or_create_dataset()
+    load_or_create_dataset(scaled=False)
+    load_or_create_dataset(scaled=True)
 
