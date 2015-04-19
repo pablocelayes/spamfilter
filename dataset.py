@@ -9,14 +9,14 @@ import numpy as np
 
 
 CATEGORICAL = [
-    # 'author_email_domain',
-    # 'author_plan_at_submission',
-    # 'document_format',
-    # 'document_upload_method',
+    'author_email_domain',
+    'author_plan_at_submission',
+    'document_format',
+    'document_upload_method',
 ]
 
 
-NUMERIC_FEATURES = [
+NUMERICAL = [
     'external',
     'internal',
     'foreign_language',
@@ -36,39 +36,55 @@ NUMERIC_FEATURES = [
 ]
 
 
-def vectorize_features(df):
-    num_X = df[NUMERIC_FEATURES].values
+def vectorize_features(df, use_cats, encode_cats):
+    num_X = df[NUMERICAL].values
 
-    # Encode categorical features
-    catdf = df[CATEGORICAL]
-    for f in CATEGORICAL:
-        uniquevals = list(catdf[f].unique())
-        catdf[f] = catdf[f].map(lambda v: uniquevals.index(v))
-    
-    enc = preprocessing.OneHotEncoder()
-    cat_X = enc.fit_transform(catdf.values)
-    cat_X = cat_X.todense()
+    if use_cats:
+        # Encode categorical features
+        catdf = df[CATEGORICAL].copy()
+        for f in CATEGORICAL:
+            uniquevals = list(catdf[f].unique())
+            catdf[f] = catdf[f].map(lambda v: uniquevals.index(v))
+        cat_X = catdf.values
 
-    # Apply scaling
-    
-    X = np.hstack((num_X, cat_X))
+        if encode_cats:
+            enc = preprocessing.OneHotEncoder()
+            cat_X = enc.fit_transform(cat_X)
+            cat_X = cat_X.todense()
 
-    return X 
+        # Apply scaling
+        X = np.hstack((num_X, cat_X))
+    else:
+        X = np.hstack((num_X,))
+        # X = np.array(num_X)
+
+    return X
 
 
-def load_or_create_dataset(scaled=True):
-    fname = 'dataset_.pickle'
+def load_or_create_dataset(scaled=True, use_cats=True, encode_cats=True):
+    """
+        use_cats: whether or not to include categorical features
+            (can be useful for testin some probabilistic approaches for
+                which we haven't yet implementd proper handling of
+                categorical features)
+        encode_cats: whether or not to encode categorical features
+            as multiple binary features (not necessary for tree-based
+                classifiers)
+    """
+    fname = 'dataset.pickle'
     if scaled:
         fname = 'scaled_' + fname
+    if use_cats:
+        fname = 'cat_' + fname
     if os.path.exists(fname):
         X, y = pickle.load(open(fname, 'rb'))
     else:    
         df = pd.read_csv('training_dataset.csv')
-        X = vectorize_features(df)
+        X = vectorize_features(df, use_cats, encode_cats)
         if scaled:
             X = preprocessing.scale(X)
         y = df.spam.values
-        pickle.dump((X, y), open(fname, 'wb'))
+        # pickle.dump((X, y), open(fname, 'wb'))
 
     return X, y
 
