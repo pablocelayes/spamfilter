@@ -82,9 +82,9 @@ def load_or_create_dataset(scaled=True, use_cats=True, encode_cats=True):
         df = pd.read_csv('training_dataset.csv')
         X = vectorize_features(df, use_cats, encode_cats)
         if scaled:
-            X = preprocessing.scale(X)
+            X = preprocessing.scale(X, with_mean=False)
         y = df.spam.values
-        # pickle.dump((X, y), open(fname, 'wb'))
+        pickle.dump((X, y), open(fname, 'wb'))
 
     return X, y
 

@@ -2,7 +2,7 @@ from sklearn.decomposition import PCA
 from dataset import load_or_create_dataset
 import matplotlib.pyplot as plt
 
-X, y = load_or_create_dataset(scaled=True, categorical=False)
+X, y = load_or_create_dataset(scaled=True, use_cats=True)
 
 # instantiate the model
 model = PCA(n_components=2)
