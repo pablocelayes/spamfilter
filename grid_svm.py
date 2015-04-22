@@ -37,8 +37,8 @@ def model_select_svc():
 
     # Set the parameters by cross-validation
     parameters = [
-                    {'kernel': ['linear'], 'C': [0.1, 1, 10]},
-                    {'kernel': ['rbf'], 'gamma': [0.1, 1, 10, 100, 500], 'C': [0.1, 1, 10]},
+                    {'kernel': ['linear'], 'C': [0.1, 1, 10], 'class_weight': [{1: w} for w in [0.5, 1, 2, 5, 10]]}
+                    # {'kernel': ['rbf'], 'gamma': [0.1, 1, 10, 100, 500], 'C': [0.1, 1, 10]},
                 ]
 
     scores = [

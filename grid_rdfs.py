@@ -31,7 +31,7 @@ import numpy as np
 
 
 def model_select_rdf():
-    X, y = load_or_create_dataset(encode_cats=True)
+    X, y = load_or_create_dataset(encode_cats=False)
 
     # Split the dataset in two equal parts
     X_train, X_test, y_train, y_test = train_test_split(
@@ -41,7 +41,8 @@ def model_select_rdf():
     params = dict(
         max_depth=np.linspace(5,10,5),
         n_estimators=[3, 4, 5, 10],
-        max_features=[25, 50, 75, 100, 150]
+        # max_features=[25, 50, 75, 100, 150]
+        # max_features = [5, 10, 15]
     )
 
 

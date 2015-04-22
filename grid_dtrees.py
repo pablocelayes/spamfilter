@@ -31,7 +31,7 @@ import numpy as np
 
 
 def model_select_dtree():
-    X, y = load_or_create_dataset(encode_cats=True)
+    X, y = load_or_create_dataset(encode_cats=False)
 
     # Split the dataset in two equal parts
     X_train, X_test, y_train, y_test = train_test_split(
@@ -42,7 +42,8 @@ def model_select_dtree():
                 'min_samples_split':[2,8,32,128],
                 'min_samples_leaf':[1,2,5,10],
                 'compute_importances':[True],
-                'max_features': [25, 50, 75, 100, 150]
+                # 'max_features': [25, 50, 75, 100, 150]
+                # 'max_features': [5, 10, 15]
             }
 
     scores = [
